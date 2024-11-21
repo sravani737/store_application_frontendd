@@ -65,7 +65,7 @@ const AddProductScreen = ({ navigation }) => {
         <Text style={styles.label}>Description</Text>
         <TextInput
           style={styles.input}
-          placeholder="Enter product description"
+          placeholder="Enter product Quantity(20ml)"
           value={description}
           onChangeText={setDescription}
         />
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 45,
-    borderColor: '#ddd',
+    borderColor: '#2F4F4F',
     borderWidth: 1.5,
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   pickerContainer: {
     borderWidth: 1.5,
-    borderColor: '#ddd',
+    borderColor: '#2F4F4F',
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 15,
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
 
   },
   button: {
-    backgroundColor: 'green',
+    backgroundColor: '#2F4F4F',
     borderRadius: 8,
     paddingVertical: 12,
     alignItems: 'center',
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'black',
+    color: 'white',
   },
 });
 

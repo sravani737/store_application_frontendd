@@ -1,75 +1,4 @@
-// import React, { useState, useEffect } from 'react';
-// import { View, Text, FlatList, StyleSheet } from 'react-native';
 
-// const OrdersScreen = ({ userId }) => {
-//     const [orders, setOrders] = useState([]);
-
-//     useEffect(() => {
-//         // Fetch user's past orders
-//         const fetchOrders = async () => {
-//             console.log("from orders screen frontend : "+userId)
-//             try {
-//                 console.log("req gng to backend")
-//                 const response = await fetch(`http://192.168.1.27:5000/api/orders/${userId}`);
-//                 console.log('res from backend')
-//                 const result = await response.json();
-//                 console.log('result:'+result)
-//                 if (response.ok) {
-//                     setOrders(result.orders);
-//                 }
-//             } catch (error) {
-//                 console.error('Error fetching orders:', error);
-//             }
-//         };
-
-//         fetchOrders();
-//     }, [userId]);
-
-//     return (
-//         <View style={styles.container}>
-//             <Text style={styles.header}>Your Orders</Text>
-//             <FlatList
-//                 data={orders}
-//                 keyExtractor={(item) => item._id}
-//                 renderItem={({ item }) => (
-//                     <View style={styles.orderContainer}>
-//                         <Text style={styles.orderLabel}>Order ID: {item._id}</Text>
-//                         <Text style={styles.orderLabel}>Total Amount: ₹{item.totalAmount.toFixed(2)}</Text>
-//                         <Text style={styles.orderLabel}>Status: {item.status}</Text>
-//                         <Text style={styles.orderLabel}>Date: {new Date(item.createdAt).toLocaleDateString()}</Text>
-//                     </View>
-//                 )}
-//             />
-//         </View>
-//     );
-// };
-
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         padding: 25,
-//         backgroundColor: '#fff',
-//     },
-//     header: {
-//         fontSize: 20,
-//         fontWeight: 'bold',
-//         marginBottom: 20,
-//     },
-//     orderContainer: {
-//         padding: 10,
-//         backgroundColor:'#2221',
-//         borderRadius:10,
-//         marginBottom:5,
-//         borderBottomWidth: 2.5,
-//         borderBottomColor: 'green',
-//     },
-//     orderLabel: {
-//         fontSize: 16,
-//         color:'black'
-//     },
-// });
-
-// export default OrdersScreen;
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, StyleSheet, Modal, TextInput, Alert, TouchableOpacity, ScrollView } from 'react-native';
 
@@ -165,7 +94,9 @@ const OrdersScreen = ({ userId }) => {
                         <Text style={styles.orderAmount}>Total: ₹{item.totalAmount.toFixed(2)}</Text>
                         {item.items.map((orderItem, index) => (
                             <View key={index} style={styles.productContainer}>
-                                <Text style={styles.productName}>{orderItem.product.product_name}</Text>
+                                <Text style={styles.productNameContainer}>
+                                    <Text style={styles.productName}>{orderItem.product.product_name}</Text>
+                                </Text>
                                 <Text style={styles.productPrice}>₹{orderItem.product.price}</Text>
                                 <TouchableOpacity
                                     style={styles.reviewButton}
@@ -218,7 +149,7 @@ const styles = StyleSheet.create({
     header: {
         fontSize: 26,
         fontWeight: 'bold',
-        color: '#1e8e3e',
+        color: '#2F4F4F',
         textAlign: 'center',
         marginVertical: 8,
     },
@@ -233,7 +164,7 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 3,
         borderLeftWidth: 4,
-        borderLeftColor: '#1e8e3e',
+        borderLeftColor: '#2F4F4F',
     },
     orderInfo: {
         marginBottom: 8,
@@ -265,6 +196,10 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderTopColor: '#f0f0f0',
     },
+    productNameContainer:{
+      flex:1,
+
+    },
     productName: {
         fontSize: 15,
         fontWeight: '500',
@@ -273,9 +208,10 @@ const styles = StyleSheet.create({
     productPrice: {
         fontSize: 14,
         color: '#666',
+        paddingRight:30
     },
     reviewButton: {
-        backgroundColor: '#1e8e3e',
+        backgroundColor: '#2F4F4F',
         paddingHorizontal: 12,
         paddingVertical: 6,
         borderRadius: 5,
@@ -301,7 +237,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 15,
-        color: '#333',
+        color: '#2F4F4F',
         textAlign: 'center',
     },
     input: {
@@ -331,7 +267,7 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     submitButton: {
-        backgroundColor: '#1e8e3e',
+        backgroundColor: '#2F4F4F',
         paddingVertical: 10,
         borderRadius: 8,
         alignItems: 'center',

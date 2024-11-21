@@ -391,11 +391,12 @@ export default function Product(props) {
                 quantity: 1,
                 image: item.image || 'default_image_url',
             };
-
+            const token = await AsyncStorage.getItem('userToken');
             const response = await fetch('http://192.168.1.27:5000/api/cart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    authorization: `Bearer ${token}`
                 },
                 body: JSON.stringify(newCartItem),
             });
@@ -448,7 +449,7 @@ export default function Product(props) {
                 </TouchableOpacity>
             </View>
             <Text style={styles.productName}>{item.product_name}</Text>
-            <Text style={styles.price}>${item.price}</Text>
+            <Text style={styles.price}>₹{item.price}<Text style={styles.quantity}>({item.description})</Text></Text>
             <TouchableOpacity
                 style={styles.addToCartButton}
                 onPress={handleAddToCart}>
@@ -503,9 +504,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         padding: 10,
         marginBottom: 20,
-        marginHorizontal: 10,
         alignItems: 'center',
-        borderBottomColor: 'green',
+        borderBottomColor: '#2F4F4F',
         borderBottomWidth: 2,
     },
     imageContainer: {
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     },
     addToCartButton: {
         borderWidth:1.5,
-        borderColor:'green',
+        borderColor:'#2F4F4F',
         backgroundColor: 'white',  // Green background
         borderRadius: 10,          // Rounded corners
         paddingVertical: 10,       // Vertical padding
@@ -607,7 +607,10 @@ const styles = StyleSheet.create({
         color: 'black',             // White text color
         fontSize: 16,              // Text size
         fontWeight: 'bold',        // Bold text
+    },
+    quantity:{
+        color:'black',
+        fontWeight:"bold",
+        fontSize:14
     }
-    
-
 });

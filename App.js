@@ -12,11 +12,11 @@ import { Provider } from 'react-redux';
 // import StackNav from './components/StackNav'
 // import StackNav from './components/StackNav' 
 // import TabNav from './components/TabNav'
-import Pro from './components/Pro'
+import Pro from './components/StackNavScreen'
 import store from './Components1/redux/store'
 // import Api01 from './components/Api01'
-import Main from './Components1/Main'
-import Carousel from './Components1/Carousel'
+import Main from './Components1/TabNavScreen'
+import Carousel from './Components1/CarouselScreen'
 import GenerateFinancialReportScreen from './components/GenerateFinancialReportScreen'
 import ViewStockLevelsScreen from './components/ViewStockLevelsScreen'
 import DeleteProductScreen from './components/DeleteProductScreen'
@@ -26,15 +26,6 @@ export default function App() {
   return (
     <View style={{flex:1}}>
       <Pro/>
-    
-    {/* <TabNav/> */}
-       {/* <Main/> */}
-   
-{/* <AddProductScreen/> */}
-{/* <DeleteProductScreen/> */}
-    {/* <Carousel/> */}
-    {/* <ViewStockLevelsScreen/> */}
-    {/* <GenerateFinancialReportScreen/> */}
      </View>
   )
 }

@@ -261,6 +261,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+    sectionTitle:{
+        color:'#2F4F4F',
+        fontWeight:'bold'
+    },
     sectionContainer: {
         marginVertical: 10,
         paddingHorizontal: 5,
@@ -279,7 +283,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 10,
         left: 20,
-        backgroundColor: 'black',
+        backgroundColor: '#2F4F4F',
         paddingVertical: 5,
         paddingHorizontal: 15,
         borderRadius: 20,
@@ -332,7 +336,7 @@ const styles = StyleSheet.create({
     },
     productQuantity: {
         fontSize: 14,
-        color: '#888',
+        color: '#2F4F4F',
         marginVertical: 5,
     },
     priceContainer: {
@@ -342,7 +346,7 @@ const styles = StyleSheet.create({
     productPrice: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: '#000',
+        color: '#2F4F4F',
         marginRight: 10,
     },
     productOriginalPrice: {

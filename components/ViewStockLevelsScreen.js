@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Button, Modal, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome'; // For the + icon
 
 const ViewStockLevelsScreen = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [categories, setCategories] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [newStock, setNewStock] = useState('');
 
   useEffect(() => {
     fetchStockData();
@@ -20,10 +24,9 @@ const ViewStockLevelsScreen = () => {
       let token = await AsyncStorage.getItem('userToken');
       const response = await axios.get('http://192.168.1.27:5000/api/products', {
         headers: {
-          authorization: `Bearer ${token}`
-        }
+          authorization: `Bearer ${token}`,
+        },
       });
-      console.log('Fetched Products:', response.data);
       setProducts(response.data);
       setFilteredProducts(response.data);
     } catch (error) {
@@ -35,7 +38,6 @@ const ViewStockLevelsScreen = () => {
     try {
       const response = await axios.get('http://192.168.1.27:5000/api/categories');
       setCategories(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
     }
@@ -50,6 +52,41 @@ const ViewStockLevelsScreen = () => {
       setFilteredProducts(filtered);
     }
   };
+
+  const handleAddStock = async () => {
+    if (selectedProduct && newStock) {
+      try {
+        let token = await AsyncStorage.getItem('userToken');
+        const response = await axios.put(
+          `http://192.168.1.27:5000/api/products/${selectedProduct._id}/add-stock`,
+          { additionalStock: parseInt(newStock) },
+          {
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+        );
+  
+        // Update the product list locally to reflect the added stock
+        const updatedProducts = products.map((product) =>
+          product._id === selectedProduct._id
+            ? { ...product, stock: product.stock + parseInt(newStock) }
+            : product
+        );
+        setProducts(updatedProducts);
+        setFilteredProducts(updatedProducts);
+        setModalVisible(false);
+        setNewStock('');
+        Alert.alert('Stock Updated', 'Stock has been successfully added.');
+      } catch (error) {
+        console.error('Error adding stock:', error);
+        Alert.alert('Error', 'Could not add stock. Please try again later.');
+      }
+    } else {
+      Alert.alert('Invalid Input', 'Please enter a valid stock value.');
+    }
+  };
+  
 
   const renderProduct = ({ item }) => {
     let stockStatus;
@@ -72,12 +109,31 @@ const ViewStockLevelsScreen = () => {
         <View style={styles.rightContainer}>
           <View style={styles.stockDetails}>
             <Text style={styles.stockText}>Stock: {item.stock} units</Text>
-            <Text style={[
-              styles.stockStatus,
-              { color: stockStatus === 'Out of Stock' ? '#D9534F' : stockStatus === 'Low Stock' ? '#F0AD4E' : '#5CB85C' }
-            ]}>
+            <Text
+              style={[
+                styles.stockStatus,
+                {
+                  color:
+                    stockStatus === 'Out of Stock'
+                      ? '#D9534F'
+                      : stockStatus === 'Low Stock'
+                        ? '#F0AD4E'
+                        : '#5CB85C',
+                },
+              ]}
+            >
               {stockStatus}
             </Text>
+          </View>
+          <View style={styles.addStockButton}>
+            <TouchableOpacity
+              onPress={() => {
+                setSelectedProduct(item);
+                setModalVisible(true);
+              }}
+            >
+              <Icon name="plus" size={24} color="#2F4F4F" />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -104,37 +160,69 @@ const ViewStockLevelsScreen = () => {
         renderItem={renderProduct}
         contentContainerStyle={styles.listContent}
       />
+
+      {/* Modal for updating stock */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Update Stock for {selectedProduct?.product_name}</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="Enter additional stock"
+              keyboardType="numeric"
+              value={newStock}
+              onChangeText={setNewStock}
+            />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity style={styles.addButton} onPress={handleAddStock}>
+                <Text style={styles.addButtonText}>Add Stock</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#F5F5F5',
+    padding: 16,
+    backgroundColor: '', // Light background for contrast
   },
   pickerContainer: {
-    borderWidth: 1,
+    backgroundColor: '#FFFFFF',
     borderRadius: 8,
-    borderColor: '#4CAF50',
-    marginBottom: 15,
-    overflow: 'hidden',
-    backgroundColor: '#FFF',
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   picker: {
-    height: 50,
-    width: '100%',
+    height: 45,
+    fontSize: 16,
+    color: '#333',
   },
   productContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 15,
-    padding: 20,
-    borderWidth: 1,
+    padding: 16,
+    marginVertical: 8,
     borderRadius: 12,
-    borderColor: '#4CAF50',
-    backgroundColor: '#FFF',
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -143,47 +231,113 @@ const styles = StyleSheet.create({
   },
   leftContainer: {
     flex: 1,
-    paddingRight: 15,
+    paddingRight: 10,
   },
   rightContainer: {
     justifyContent: 'center',
-    flex: 1,
+    alignItems: 'center',
   },
   stockDetails: {
-    backgroundColor: '#F9F9F9',
-    borderWidth: 1,
-    borderRadius: 8,
-    borderColor: '#DDD',
-    padding: 10,
     alignItems: 'center',
+    marginBottom: 6,
   },
   productName: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 5,
+    fontWeight: '700',
+    color: '#2F4F4F',
   },
   categoryText: {
     fontSize: 14,
-    color: '#777',
-    marginBottom: 5,
+    color: '#6B7280',
+    marginTop: 4,
   },
   stockText: {
-    fontSize: 16,
-    color: '#555',
-    marginBottom: 5,
+    fontSize: 15,
+    color: '#2F4F4F',
+    fontWeight: '500',
   },
   stockStatus: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontWeight: '600',
   },
   dateAdded: {
     fontSize: 12,
-    color: '#888',
+    color: '#9CA3AF',
+    marginTop: 8,
   },
   listContent: {
     paddingBottom: 20,
   },
+  addStockButton: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 10,
+    padding: 8,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    padding: 20,
+    borderRadius: 12,
+    width: '80%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#111827',
+  },
+  modalInput: {
+    height: 44,
+    borderColor: '#D1D5DB',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    marginBottom: 20,
+    color: '#111827',
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  addButton: {
+    backgroundColor: '#2F4F4F', 
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  cancelButton: {
+    backgroundColor: '#FF4C4C', 
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  
 });
 
 export default ViewStockLevelsScreen;

@@ -52,7 +52,7 @@ export default function UserList({ fetchUsers }) {
     <View style={styles.userContainer}>
       <View style={styles.userInfoContainer}>
         {/* Add User Icon */}
-        <Feather name="user" size={30} color="green" style={styles.userIcon} />
+        <Feather name="user" size={30} color="black" style={styles.userIcon} />
         
         <View style={styles.userDetails}>
           <Text style={styles.userText}>Name: {item.user_name}</Text>
@@ -74,7 +74,7 @@ export default function UserList({ fetchUsers }) {
           style={styles.deleteButton}
           onPress={() => confirmDeleteUser(item._id)}
         >
-          <Icon name="trash" size={20} color="red" />
+          <Icon name="trash" size={20} color="#2F4F4F" />
         </TouchableOpacity>
       </View>
     </View>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 4,
     borderWidth:1.5,
-    borderColor:'green'
+    borderColor:'#2F4F4F'
   },
   userInfoContainer: {
     flexDirection: 'row',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
   },
   userText: {
     fontSize: 16,
-    color: '#333',
+    color: '#2F4F4F',
     marginBottom: 4,
   },
   actionButtons: {

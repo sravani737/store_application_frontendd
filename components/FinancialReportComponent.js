@@ -152,6 +152,7 @@
 // });
 
 // export default GenerateFinancialReportScreen;
+
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, Button, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -159,9 +160,6 @@ import axios from 'axios';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-
 
 const FinancialReportScreen = () => {
   const [orderData, setOrderData] = useState([]);
@@ -178,10 +176,11 @@ const FinancialReportScreen = () => {
     const fetchOrders = async () => {
       try {
         let token = await AsyncStorage.getItem('userToken');
-        const response = await axios.get(`http://192.168.1.27:5000/api/orders`,{
-          headers:{
-             Authorization:  `Bearer ${token}`
-        }});
+        const response = await axios.get(`http://192.168.1.27:5000/api/orders`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
         setOrderData(response.data);
         setFilteredData(response.data);
       } catch (error) {
@@ -217,19 +216,44 @@ const FinancialReportScreen = () => {
     return { totalSpending, totalProfit, totalLoss };
   };
 
-  // Prepare data for chart
+  // Group data by date and aggregate profit/loss
+  const groupDataByDate = (orders) => {
+    const aggregatedData = {};
+
+    orders.forEach((order) => {
+      const date = new Date(order.createdAt).toLocaleDateString();
+      const { totalProfit, totalLoss } = calculateTotals(order.items);
+
+      if (!aggregatedData[date]) {
+        aggregatedData[date] = { profit: 0, loss: 0 };
+      }
+
+      // Aggregate profit and loss
+      aggregatedData[date].profit += totalProfit;
+      aggregatedData[date].loss += totalLoss;
+    });
+
+    return aggregatedData;
+  };
+
+  // Prepare data for the chart
+  const aggregatedData = groupDataByDate(filteredData);
+  const dates = Object.keys(aggregatedData);
+  const profits = dates.map((date) => aggregatedData[date].profit);
+  const losses = dates.map((date) => aggregatedData[date].loss);
+
   const chartData = {
-    labels: filteredData.map(order => new Date(order.createdAt).toLocaleDateString()),
+    labels: dates,
     datasets: [
       {
-        data: filteredData.map(order => calculateTotals(order.items).totalProfit),
-        color: () => `rgba(0, 128, 0, 1)`, // optional
-        strokeWidth: 2, // optional
+        data: profits,
+        color: () => `rgba(0, 128, 0, 1)`,
+        strokeWidth: 2,
       },
       {
-        data: filteredData.map(order => calculateTotals(order.items).totalLoss),
-        color: () => `rgba(255, 0, 0, 1)`, // optional
-        strokeWidth: 2, // optional
+        data: losses,
+        color: () => `rgba(255, 0, 0, 1)`,
+        strokeWidth: 2,
       }
     ],
   };
@@ -271,7 +295,7 @@ const FinancialReportScreen = () => {
       <Text style={styles.chartTitle}>Profit/Loss Over Selected Period</Text>
       <LineChart
         data={chartData}
-        width={screenWidth-30}
+        width={screenWidth - 30}
         height={220}
         yAxisSuffix=" ₹"
         chartConfig={{
@@ -289,7 +313,6 @@ const FinancialReportScreen = () => {
         style={{
           marginVertical: 8,
           borderRadius: 16,
-        
         }}
       />
 
@@ -302,9 +325,9 @@ const FinancialReportScreen = () => {
           return (
             <View style={styles.orderContainer}>
               <Text style={styles.date}>Transaction Date: {new Date(item.createdAt).toLocaleDateString()}</Text>
-              <Text style={styles.total}>Total Spending: ${totalSpending.toFixed(2)}</Text>
-              {totalProfit > 0 && <Text style={styles.profit}>Profit: ${totalProfit.toFixed(2)}</Text>}
-              {totalLoss > 0 && <Text style={styles.loss}>Loss: -${totalLoss.toFixed(2)}</Text>}
+              <Text style={styles.total}>Total Spending: ₹{totalSpending.toFixed(2)}</Text>
+              {totalProfit > 0 && <Text style={styles.profit}>Profit: ₹{totalProfit.toFixed(2)}</Text>}
+              {totalLoss > 0 && <Text style={styles.loss}>Loss: -₹{totalLoss.toFixed(2)}</Text>}
             </View>
           );
         }}
@@ -323,23 +346,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 16,
-    borderRadius:10,
+    borderRadius: 10,
   },
   chartTitle: {
     fontSize: 18,
     textAlign: 'center',
-    fontWeight:'bold',
+    fontWeight: 'bold',
     marginBottom: 10,
-    color:'black',
+    color: 'black',
   },
   orderContainer: {
     marginBottom: 10,
     padding: 16,
     backgroundColor: '#FFF',
     borderRadius: 8,
-  },
-  datePicker:{
-       color:'black'
   },
   date: {
     fontSize: 16,
@@ -352,14 +372,15 @@ const styles = StyleSheet.create({
   profit: {
     fontSize: 16,
     color: 'blue',
-    fontWeight:'bold',
+    fontWeight: 'bold',
   },
   loss: {
     fontSize: 16,
     color: 'red',
-    fontWeight:'bold',
+    fontWeight: 'bold',
   },
 });
 
 export default FinancialReportScreen;
+
 

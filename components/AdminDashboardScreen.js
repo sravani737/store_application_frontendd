@@ -263,11 +263,10 @@
 
 import React, { useCallback } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer,} from '@react-navigation/native';
 import {Alert} from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import UserList from './UserListComponent'; // Your UserList component
-import StockManagement from './StockManagementComponent'; // Stock management
+import Stocks from './StockManagementComponent'; // Stock management
 import FinancialReport from './FinancialReportComponent'; // Financial reports
 import AsyncStorage from '@react-native-async-storage/async-storage'; 
 
@@ -323,7 +322,7 @@ export default function TabNavigator() {
           inactiveTintColor: 'gray',
         }}
       >
-        <Tab.Screen name="Stocks" component={StockManagement}   options={{ headerShown: false }}/>
+        <Tab.Screen name="Stocks" component={Stocks}   options={{ headerShown: false }}/>
         <Tab.Screen name="Users" >
           {() => <UserList fetchUsers={fetchUsers} />}
         </Tab.Screen>

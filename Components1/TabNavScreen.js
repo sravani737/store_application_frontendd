@@ -192,22 +192,21 @@
 
 
 
-import { StyleSheet,Image } from 'react-native';
+import { StyleSheet,Image,View ,Text} from 'react-native';
 import React from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useSelector } from 'react-redux';  // To connect Redux store
 import UserList from './UserProfileScreen';
 import Groceries from './GroceriesScreen';
 import CartScreen from './CartScreen';
-import Payment from './Payment';
-import Orders from './Orders';
-import ProductWrapper from '../Components1/HomeScreen';
-import SearchScreen from '../components/SearchScreen';
-import LoaderScreen from '../components/LoaderScreen';
-import HomeScreen from '../Components1/HomeScreen';
+import Payment from './PaymentScreen';
+import Orders from './OrdersScreen';
+import ProductWrapper from './HomeScreen';
+import HomeScreen from './HomeScreen';
+import AboutUsScreen from './AboutUs';
+import SettingsScreen from './SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -217,44 +216,55 @@ function ProductWrapperTabs({ userId }) {
   const cartCount = useSelector((state) => state.reducer.items.length); // Updated path for the cart reducer
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ color, size }) => {
-          let iconName;
-          if (route.name === 'ProductWrapper') iconName = 'home';
-          else if (route.name === 'Groceries') iconName = 'shopping-basket';
-          else if (route.name === 'Profile') iconName = 'user';
-          else if (route.name === 'Cart') iconName = 'shopping-cart';
-          else if (route.name === 'Search') iconName = 'search';
+  screenOptions={({ route }) => ({
+    tabBarIcon: ({ color, size }) => {
+      let iconName;
+      if (route.name === 'ProductWrapper') iconName = 'home';
+      else if (route.name === 'Groceries') iconName = 'shopping-basket';
+      else if (route.name === 'Profile') iconName = 'user';
+      else if (route.name === 'Cart') iconName = 'shopping-cart';
+      else if (route.name === 'Search') iconName = 'search';
 
-          return <FontAwesome name={iconName} size={size} color={color} />;
-        },
-        tabBarBadge: route.name === 'Cart' ? cartCount : null, // Only Cart tab gets the badge
-      })}
-      tabBarOptions={{
-        activeTintColor: 'black',
-        inactiveTintColor: 'gray',
-      }}
-    >
-      <Tab.Screen name="ProductWrapper" options={{ title: 'Home' }}>
-        {(props) => <ProductWrapper {...props} userId={userId} />}
-      </Tab.Screen>
-      <Tab.Screen name="Groceries">
-        {(props) => <Groceries {...props} userId={userId} />}
-      </Tab.Screen>
-      <Tab.Screen name="Profile">
-        {(props) => <UserList {...props} userId={userId} />}
-      </Tab.Screen>
-      <Tab.Screen name="Cart">
-        {(props) => <CartScreen {...props} userId={userId} />} 
-      </Tab.Screen>
-      {/* <Tab.Screen
-  name="Cart"
-  component={LoaderScreen}
-  initialParams={{ userId: userId }} // Pass userId here as initial params
-/> */}
+      return <FontAwesome name={iconName} size={size} color={color} />;
+    },
+    tabBarBadge: route.name === 'Cart' ? cartCount : null, // Only Cart tab gets the badge
+    tabBarActiveTintColor: '#2F4F4F',
+    tabBarInactiveTintColor: 'gray',
+    tabBarStyle: { display: 'flex' },
+  })}
+>
+<Tab.Screen
+  name="ProductWrapper"
+  options={{
+    headerTitle: () => (
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image
+          source={require('../components/img/my.png')} 
+          style={{ width: 40, height: 40, marginRight: 8 }}
+          resizeMode="cover" 
+        />
+        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#2F4F4F' }}>GrocerEase</Text>
+      </View>
+    ),
+    headerStyle: {
+      backgroundColor: 'white', 
+    },
+  }}
+>
+  {(props) => <ProductWrapper {...props} userId={userId} />}
+</Tab.Screen>
 
-      {/* <Tab.Screen name="Search" component={SearchScreen} /> */}
-    </Tab.Navigator>
+  <Tab.Screen name="Groceries">
+    {(props) => <Groceries {...props} userId={userId} />}
+  </Tab.Screen>
+  <Tab.Screen name="Profile">
+    {(props) => <UserList {...props} userId={userId} />}
+  </Tab.Screen>
+  <Tab.Screen name="Cart">
+    {(props) => <CartScreen {...props} userId={userId} />} 
+  </Tab.Screen>
+</Tab.Navigator>
+
   );
 }
 
@@ -265,16 +275,6 @@ export default function Main({ route }) {
       <Stack.Screen name="Home" 
        options={{
        headerShown: false,
-      //     headerLeft: () => (
-      //       <Image
-      //         source={require('../components/img/logo.jpeg')}
-      //         style={{ width: 50, height: 50, marginLeft: 10 }}
-      //       />
-      //     ),
-      //     headerTitle: '',
-      //     headerStyle: {
-      //       backgroundColor: '#f8f8f8',
-      //     },
         }}
       >
         {(props) => <ProductWrapperTabs {...props} userId={userId} />}
@@ -294,6 +294,12 @@ export default function Main({ route }) {
       </Stack.Screen>
       <Stack.Screen name="Profile">
         {(props) => <UserList {...props} userId={userId} />}
+      </Stack.Screen>
+      <Stack.Screen name="AboutUs">
+        {(props) => <AboutUsScreen {...props} userId={userId} />}
+      </Stack.Screen>
+      <Stack.Screen name="Settings">
+        {(props) => <SettingsScreen {...props} userId={userId} />}
       </Stack.Screen>
     </Stack.Navigator>
   );

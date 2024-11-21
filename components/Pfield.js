@@ -9,7 +9,7 @@ export default function Pfield(props) {
             style={{
                 borderRadius: 100, backgroundColor: 'rgb(220,220,220)',
                 color: green, paddingHorizontal: 10,
-                width:'80%',marginBottom:25,fontSize:17
+                width:'80%',marginBottom:10,fontSize:16
             }}
             placeholderTextColor={green} >
 

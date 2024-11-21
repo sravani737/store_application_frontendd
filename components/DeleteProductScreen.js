@@ -68,7 +68,7 @@ const DeleteProductScreen = () => {
           </Text>
         </View>
         <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item._id)}>
-        <Icon name="trash" size={22} color="red" />
+        <Icon name="trash" size={22} color="#2F4F4F" />
         </TouchableOpacity>
       </View>
     );
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderRadius: 10,
-    borderColor: 'green',
+    borderColor: '#2F4F4F',
   },
   productTextContainer: {
     flex: 1,
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   productCreatedAt: {
     marginTop:3,
     fontSize: 14,
-    color: '#8B0', // Adjust color as needed
+    color: '#2F4F4F', // Adjust color as needed
   },
   deleteButton: {
     backgroundColor: 'white', // bright red background

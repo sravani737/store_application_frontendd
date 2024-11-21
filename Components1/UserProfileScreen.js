@@ -1,22 +1,3 @@
-// import { StyleSheet, Text, View, } from 'react-native'
-// import React  from 'react'
-
-
-// export default function UserList() {
-
-//   return (
-//     <View>
-//       <Text style={{color:'green',fontSize:30}}>welcome to your profile
-        
-//      </Text>
-//     </View>
-//   )
-// }
-
-// const styles = StyleSheet.create({})
-
-
-
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -175,17 +156,17 @@ const UserList = ({ navigation, userId }) => {
       {!isEditing && (
         <View style={styles.actionsContainer} >
           <TouchableOpacity style={styles.action} onPress={() => navigation.navigate('Orders',{userId})}>
-            <Icon name="list-alt" size={30} color="#4CAF50" />
+            <Icon name="list-alt" size={30} color="#2F4F4F" />
             <Text style={styles.actionText}>My Orders</Text>
             <Feather name="chevron-right" size={25} color="green" style={styles.feather} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.action}>
-            <Icon name="money" size={30} color="#4CAF50" />
-            <Text style={styles.actionText}>Transactions</Text>
+          <TouchableOpacity style={styles.action} onPress={() => navigation.navigate('AboutUs',{userId})}>
+            <Feather name="info" size={30} color="#2F4F4F" />
+            <Text style={styles.actionText}>About us</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.action}>
-            <Icon name="credit-card" size={30} color="#4CAF50" />
-            <Text style={styles.actionText}>Wallet</Text>
+          <TouchableOpacity style={styles.action}onPress={() => navigation.navigate('Settings',{userId})}>
+            <Feather name="tool" size={30} color="#2F4F4F" />
+            <Text style={styles.actionText}>Settings</Text>
           </TouchableOpacity>
           {/* Add more options as needed */}
         </View>
@@ -194,7 +175,7 @@ const UserList = ({ navigation, userId }) => {
       {/* Logout Button */}
       {!isEditing && (
         <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={handleLogout}>
-        <Icon name="sign-out" size={20} color="#fff" style={styles.icon} /> 
+        <Icon name="sign-out" size={25} color="#2F4F4F" /> 
         <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
       )}
@@ -209,18 +190,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: 'white',
   },
   header: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#2F4F4F',
     padding: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderRadius:10
   },
   profileInfo: {
     flexDirection: 'row',
     alignItems: 'center',
+    
   },
   userInfo: {
     marginLeft: 15,
@@ -254,22 +237,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   button: {
-    backgroundColor: '#4CAF50',
-    padding: 15,
+    backgroundColor: 'white',
+    padding: 10,
     borderRadius: 5,
     alignItems: 'center',
     marginTop: 20,
+    borderWidth:1,
+    borderRadius:10,
+    borderColor:'#2F4F4F',
+    marginHorizontal:5
+
   },
   buttonText: {
     fontSize:16,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#2F4F4F',
     marginHorizontal:'5%',
   },
   logoutButton: {
-    
     flexDirection:'row',
-    backgroundColor: '#d9534f',
+    backgroundColor: 'white',
+    borderWidth:1,
+    borderColor:'#2F4F4F',
   },
   actionsContainer: {
     padding: 20,
